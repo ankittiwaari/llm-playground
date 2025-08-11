@@ -1,6 +1,6 @@
-# Learn LangChain: Semantic Search Example
+# Learn LangChain: Semantic Search & Chatbot Example
 
-This project demonstrates how to use [LangChain](https://python.langchain.com/) for semantic search on PDF documents, including document splitting and vector-based retrieval.
+This project demonstrates how to use [LangChain](https://python.langchain.com/) for semantic search on PDF documents and includes a chatbot example that answers only in a specified language, using LangGraph and Postgres for checkpointing.
 
 ## Features
 
@@ -8,22 +8,27 @@ This project demonstrates how to use [LangChain](https://python.langchain.com/) 
 - Splits documents into smaller chunks for better semantic search
 - Stores document chunks in a vector store for efficient retrieval
 - Retrieves relevant document chunks based on user queries
+- **Chatbot**: Responds to user queries in a specified language using LangChain, LangGraph, and Postgres for stateful conversation
 
 ## Requirements
 
 - Python 3.8+
 - [langchain_community](https://pypi.org/project/langchain-community/)
 - [PyPDF2](https://pypi.org/project/PyPDF2/)
+- [langgraph](https://pypi.org/project/langgraph/)
+- [psycopg2](https://pypi.org/project/psycopg2/) (for Postgres checkpointing)
 - Additional dependencies for your splitter and vector store (see `shared/` modules)
 
 Install dependencies:
 
 ```bash
-pip install langchain_community PyPDF2
+pip install langchain_community PyPDF2 langgraph psycopg2
 # Add any other dependencies required by your splitter/vectorstore
 ```
 
 ## Usage
+
+### Semantic Search
 
 1. Place your PDF file in the `sample_data` directory.
 2. Update the `file_path` in `semantic_search.py` if needed.
@@ -41,6 +46,23 @@ This will:
 - (Optionally) Embed and add chunks to the vector store
 - Retrieve relevant chunks for sample queries and print the results
 
+### Chatbot
+
+The `chatbot.py` script demonstrates a chatbot that only answers in a specified language and uses Postgres for checkpointing conversation state.
+
+1. Ensure Postgres is running and accessible with the credentials in `chatbot.py`.
+2. Ensure you have the required model setup in `shared/model_instance.py` (must provide `get_model()`).
+3. Run the chatbot script:
+
+```bash
+python chatbot.py
+```
+
+This will:
+- Start a conversation with a sample query
+- Respond only in the specified language (see the `language` variable in the script)
+- Use Postgres to checkpoint conversation state
+
 ## Project Structure
 
 ```
@@ -49,8 +71,10 @@ learn_langchain/
 │   └── nke-10k-2023.pdf
 ├── shared/
 │   ├── splitter_instance.py
-│   └── vectorstore_instance.py
+│   ├── vectorstore_instance.py
+│   └── model_instance.py
 ├── semantic_search.py
+├── chatbot.py
 ├── README.md
 └── .gitignore
 ```
@@ -58,7 +82,8 @@ learn_langchain/
 ## Notes
 
 - Embedding documents can be expensive; the code for adding documents to the vector store is commented out by default.
-- You can modify the queries in `semantic_search.py` as needed.
+- You can modify the queries in `semantic_search.py` and the language in `chatbot.py` as needed.
+- The chatbot requires a running Postgres instance and the correct connection string.
 
 ## License
 
