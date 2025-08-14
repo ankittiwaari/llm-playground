@@ -6,7 +6,7 @@ from langgraph.graph import START, StateGraph
 from langgraph.graph.message import add_messages
 from typing import Sequence
 from typing_extensions import Annotated, TypedDict
-
+from shared.config import DB_URI
 model = get_model()
 
 class State(TypedDict):
@@ -33,8 +33,6 @@ prompt_template = ChatPromptTemplate.from_messages(
 )
 
 workflow = StateGraph(state_schema=State)
-DB_URI = "postgres://postgres:passwd@localhost:5432/postgres?sslmode=disable"
-
 
 def call_model(state: State):
     trimmed_messages = trimmer.invoke(state["messages"])

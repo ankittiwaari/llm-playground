@@ -1,0 +1,1 @@
+DB_URI = "postgres://postgres:passwd@localhost:5432/postgres?sslmode=require"

@@ -1,29 +1,36 @@
 from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient, models
+from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams, Distance
 from langchain_ollama import OllamaEmbeddings
+from dotenv import load_dotenv
+from os import getenv
 
-embeddings = OllamaEmbeddings(model="llama3")
+load_dotenv()
+
+embeddings = OllamaEmbeddings(model=getenv("EMBEDDINGS_MODEL"))
+
 
 def get_vectorstore_client():
     client = QdrantClient(
-        url="http://localhost:6333",
+        url=getenv("VECTORSTORE_URL"),
         api_key=None
     )
 
-    collection_name = "semantic_search"
-    
-    ensure_collection(client, collection_name, models, embeddings)
+    # collection_name = "semantic_search"
+    collection_name = getenv("VECTORSTORE_COLLECTION_NAME")
+
+    ensure_collection(client, collection_name, embeddings)
 
     vector_store = QdrantVectorStore(
-        client = client,
+        client=client,
         collection_name=collection_name,
         embedding=embeddings
     )
 
     return vector_store
 
-def ensure_collection(client, collection_name, models, embeddings):
+
+def ensure_collection(client, collection_name, embeddings):
     try:
         sample_vec = embeddings.embed_query("determine vector size")
     except Exception:
